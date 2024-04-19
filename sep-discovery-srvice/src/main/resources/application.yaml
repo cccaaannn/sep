@@ -1,0 +1,10 @@
+server.port: 8090
+
+spring.application.name: sep-discovery-service
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    service-url.defaultZone: http://localhost:8090/eureka/
+  instance.lease-renewal-interval-in-seconds: 0
