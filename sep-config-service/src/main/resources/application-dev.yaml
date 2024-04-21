@@ -1,4 +1,5 @@
 spring:
+  application.name: sep-config-service
   cloud.config:
       server.git:
           default-label: master
