@@ -1,0 +1,11 @@
+spring:
+  cloud.config:
+      server.git:
+          default-label: master
+          search-paths: sep-config
+          uri: ../sep-config
+      fail-fast: true
+
+eureka.client.service-url.defaultZone: http://localhost:8090/eureka/
+
+encrypt.key: 6698128c-63df-4d33-a98f-b58aa8013251
