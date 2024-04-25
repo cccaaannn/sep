@@ -1,0 +1,8 @@
+spring:
+  application.name: sep-gateway-service
+  config.import: "configserver:"
+  cloud.config.discovery:
+    enabled: true
+    service-id: sep-config-service
+
+eureka.client.service-url.defaultZone: http://localhost:8090/eureka/
