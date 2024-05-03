@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Product extends BaseEntity {
     @Column(name = "name", length = 250, nullable = false)
