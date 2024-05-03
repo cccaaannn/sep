@@ -2,7 +2,6 @@ package com.kurtcan.sepproductservice.product;
 
 import com.kurtcan.sepproductservice.product.request.ProductAdd;
 import com.kurtcan.sepproductservice.product.request.ProductUpdate;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
