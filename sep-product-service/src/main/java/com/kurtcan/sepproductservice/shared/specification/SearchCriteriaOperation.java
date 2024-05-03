@@ -11,8 +11,7 @@ public enum SearchCriteriaOperation {
 
     private final String value;
 
-    private SearchCriteriaOperation(String value) {
+    SearchCriteriaOperation(String value) {
         this.value = value;
     }
-
 }
