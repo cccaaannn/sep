@@ -2,6 +2,7 @@ package com.kurtcan.sepproductservice.product;
 
 import com.kurtcan.sepproductservice.product.request.ProductAdd;
 import com.kurtcan.sepproductservice.product.request.ProductUpdate;
+import com.kurtcan.sepproductservice.shared.controller.BaseController;
 import com.kurtcan.sepproductservice.shared.result.ErrorResult;
 import com.kurtcan.sepproductservice.shared.result.SuccessResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/products")
 @Tag(name = "Products", description = "Product operations")
-public class ProductController {
+public class ProductController extends BaseController {
 
     private final ProductService service;
 
@@ -71,7 +71,7 @@ public class ProductController {
         var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));
 
         Page<Product> products = service.searchProduct(search, pageRequest);
-        return ResponseEntity.ok(products);
+        return ok(products);
     }
 
     @Operation(
@@ -97,7 +97,7 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<?> getProduct(@PathVariable("productId") UUID productId) {
         Product product = service.getProduct(productId);
-        return ResponseEntity.ok(product);
+        return ok(product);
     }
 
     @Operation(
@@ -121,7 +121,7 @@ public class ProductController {
     @PostMapping("")
     public ResponseEntity<?> addProduct(@Valid @RequestBody ProductAdd productAdd) {
         Product product = service.addProduct(productAdd);
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        return created(product);
     }
 
     @Operation(
@@ -148,7 +148,7 @@ public class ProductController {
     @PutMapping("/{productId}")
     public ResponseEntity<?> updateProduct(@PathVariable("productId") UUID productId, @Valid @RequestBody ProductUpdate productUpdate) {
         Product product = service.updateProduct(productId, productUpdate);
-        return ResponseEntity.ok(product);
+        return ok(product);
     }
 
     @Operation(
@@ -174,7 +174,7 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable("productId") UUID productId) {
         service.deleteProduct(productId);
-        return ResponseEntity.ok(new SuccessResult("Deleted"));
+        return ok(new SuccessResult("Deleted"));
     }
 
 }
