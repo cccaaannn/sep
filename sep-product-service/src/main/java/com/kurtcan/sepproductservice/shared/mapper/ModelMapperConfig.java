@@ -1,4 +1,4 @@
-package com.kurtcan.sepproductservice.shared.config;
+package com.kurtcan.sepproductservice.shared.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;

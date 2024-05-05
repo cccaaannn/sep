@@ -1,4 +1,4 @@
-package com.kurtcan.sepproductservice.shared.config;
+package com.kurtcan.sepproductservice.shared.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

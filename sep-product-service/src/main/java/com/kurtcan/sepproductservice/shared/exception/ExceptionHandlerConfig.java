@@ -1,4 +1,4 @@
-package com.kurtcan.sepproductservice.shared.config;
+package com.kurtcan.sepproductservice.shared.exception;
 
 import com.kurtcan.sepproductservice.shared.exception.ResourceAlreadyExistsException;
 import com.kurtcan.sepproductservice.shared.exception.ResourceNotFoundException;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandlerConfig {
+public class ExceptionHandlerConfig {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
