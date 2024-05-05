@@ -2,6 +2,7 @@ package com.kurtcan.sepproductservice.product;
 
 import com.kurtcan.sepproductservice.product.request.ProductAdd;
 import com.kurtcan.sepproductservice.product.request.ProductUpdate;
+import com.kurtcan.sepproductservice.shared.event.JsonEventPublisher;
 import com.kurtcan.sepproductservice.shared.event.SimpleEvent;
 import com.kurtcan.sepproductservice.shared.exception.ResourceNotFoundException;
 import com.kurtcan.sepproductservice.shared.specification.SearchCriteriaBuilder;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @CacheConfig(cacheNames = "products")
 public class ProductServiceImpl implements ProductService {
 
+    private final JsonEventPublisher eventPublisher;
     private final ProductRepository repository;
     private final ModelMapper mapper;
 
@@ -62,8 +64,9 @@ public class ProductServiceImpl implements ProductService {
     @CacheEvict(allEntries = true)
     public Product addProduct(ProductAdd productAdd) {
         Product product = mapper.map(productAdd, Product.class);
-        repository.save(product);
+        product = repository.save(product);
         repository.flush();
+        eventPublisher.publish(ProductEventTopic.CREATED, SimpleEvent.fromEntity(product));
         return product;
     }
 
@@ -75,6 +78,7 @@ public class ProductServiceImpl implements ProductService {
         mapper.map(productUpdate, product);
         repository.save(product);
         repository.flush();
+        eventPublisher.publish(ProductEventTopic.UPDATED, SimpleEvent.fromEntity(product));
         return product;
     }
 
@@ -85,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
         repository.findById(id).orElseThrow(ResourceNotFoundException::new);
         repository.deleteById(id);
         repository.flush();
+        eventPublisher.publish(ProductEventTopic.DELETED, SimpleEvent.builder().id(id).build());
     }
 
 }
