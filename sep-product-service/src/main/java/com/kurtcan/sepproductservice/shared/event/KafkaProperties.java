@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "kafka.bootstrap-server")
 public class KafkaProperties {
-    private String url;
+    private String host;
     private int port;
     private String consumerGroupId;
 }

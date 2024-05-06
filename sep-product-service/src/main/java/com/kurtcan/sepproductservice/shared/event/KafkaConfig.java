@@ -25,7 +25,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, STR."\{kafkaProperties.getUrl()}:\{kafkaProperties.getPort()}");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, STR."\{kafkaProperties.getHost()}:\{kafkaProperties.getPort()}");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
@@ -39,7 +39,7 @@ public class KafkaConfig {
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, STR."\{kafkaProperties.getUrl()}:\{kafkaProperties.getPort()}");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, STR."\{kafkaProperties.getHost()}:\{kafkaProperties.getPort()}");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getConsumerGroupId());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
