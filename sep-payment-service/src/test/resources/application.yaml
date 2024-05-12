@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: sep-payment-service
+  config.import: "optional:configserver:"
+  cloud.config.discovery:
+    enabled: false
+
+kafka:
+  bootstrap-server:
+    url: localhost
+    port: 9092
+    consumer-group-id: sep-payment-group
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
