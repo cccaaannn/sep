@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -24,7 +26,11 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
+@RequiredArgsConstructor
 public class PaymentRouter {
+
+    @Value("${api.prefix}")
+    private String apiPrefix;
 
     @Bean
     @RouterOperations({
@@ -112,7 +118,7 @@ public class PaymentRouter {
     })
     public RouterFunction<ServerResponse> paymentRoute(PaymentHandler paymentHandler) {
         return route()
-                .path("/payments", builder -> builder
+                .path(apiPrefix, builder -> builder
                         .nest(accept(APPLICATION_JSON), routerBuilder -> routerBuilder
                                 .GET("", paymentHandler::getAllPayments)
                                 .GET("/{paymentId}", paymentHandler::getPaymentById)
