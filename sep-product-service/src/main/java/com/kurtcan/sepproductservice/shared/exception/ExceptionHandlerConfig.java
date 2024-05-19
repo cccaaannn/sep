@@ -1,7 +1,5 @@
 package com.kurtcan.sepproductservice.shared.exception;
 
-import com.kurtcan.sepproductservice.shared.exception.ResourceAlreadyExistsException;
-import com.kurtcan.sepproductservice.shared.exception.ResourceNotFoundException;
 import com.kurtcan.sepproductservice.shared.result.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
