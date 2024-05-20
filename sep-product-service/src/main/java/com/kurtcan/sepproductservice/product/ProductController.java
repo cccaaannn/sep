@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/products")
+@RequestMapping("${api.prefix}")
 @Tag(name = "Products", description = "Product operations")
 public class ProductController extends BaseController {
 
@@ -38,12 +37,13 @@ public class ProductController extends BaseController {
                     @Parameter(
                             name = "search",
                             description = "Search query with operators ':,~,<,>', ex: name~'test',createdAt>'2021-01-01',price:10",
-                            in = ParameterIn.QUERY
+                            in = ParameterIn.QUERY,
+                            required = false
                     ),
-                    @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY),
-                    @Parameter(name = "size", description = "Page size", in = ParameterIn.QUERY),
-                    @Parameter(name = "sort", description = "Sort field name", in = ParameterIn.QUERY),
-                    @Parameter(name = "order", description = "Sort order", in = ParameterIn.QUERY),
+                    @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY, required = false),
+                    @Parameter(name = "size", description = "Page size", in = ParameterIn.QUERY, required = false),
+                    @Parameter(name = "sort", description = "Sort field name", in = ParameterIn.QUERY, required = false),
+                    @Parameter(name = "order", description = "Sort order", in = ParameterIn.QUERY, required = false),
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success",
@@ -69,15 +69,13 @@ public class ProductController extends BaseController {
             @RequestParam(value = "order", defaultValue = "desc") String order
     ) {
         var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sort));
-
-        Page<Product> products = service.searchProduct(search, pageRequest);
-        return ok(products);
+        return ok(service.searchProduct(search, pageRequest));
     }
 
     @Operation(
             summary = "Get a product by ID",
             parameters = {
-                    @Parameter(name = "productId", description = "ID of the product", required = true, in = ParameterIn.PATH)
+                    @Parameter(name = "productId", description = "ID of the product", in = ParameterIn.PATH, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success",
@@ -127,7 +125,7 @@ public class ProductController extends BaseController {
     @Operation(
             summary = "Update a product by ID",
             parameters = {
-                    @Parameter(name = "productId", description = "ID of the product", required = true, in = ParameterIn.PATH)
+                    @Parameter(name = "productId", description = "ID of the product", in = ParameterIn.PATH, required = true)
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = ProductUpdate.class))),
             responses = {
@@ -154,7 +152,7 @@ public class ProductController extends BaseController {
     @Operation(
             summary = "Delete a product by ID",
             parameters = {
-                    @Parameter(name = "productId", description = "ID of the product", required = true, in = ParameterIn.PATH)
+                    @Parameter(name = "productId", description = "ID of the product", in = ParameterIn.PATH, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success",

@@ -5,6 +5,7 @@ import com.kurtcan.sepproductservice.product.request.ProductUpdate;
 import com.kurtcan.sepproductservice.shared.event.JsonEventPublisher;
 import com.kurtcan.sepproductservice.shared.event.SimpleEvent;
 import com.kurtcan.sepproductservice.shared.exception.ResourceNotFoundException;
+import com.kurtcan.sepproductservice.shared.pagaination.PageImpl;
 import com.kurtcan.sepproductservice.shared.specification.SearchCriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
@@ -13,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Cacheable
-    public Page<Product> searchProduct(String criteriaStr, PageRequest pageRequest) {
+    public PageImpl<Product> searchProduct(String criteriaStr, PageRequest pageRequest) {
         var specs = Arrays.stream(criteriaStr.split(","))
                 .map(SearchCriteriaBuilder::build)
                 .filter(Optional::isPresent)
@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
 
         if (specs.isEmpty()) {
-            return repository.findAll(pageRequest);
+            return PageImpl.from(repository.findAll(pageRequest));
         }
 
         Specification<Product> finalSpec = specs.getFirst();
@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
             finalSpec = Specification.where(finalSpec).and(specs.get(i));
         }
 
-        return repository.findAll(finalSpec, pageRequest);
+        return PageImpl.from(repository.findAll(finalSpec, pageRequest));
     }
 
     @Override
