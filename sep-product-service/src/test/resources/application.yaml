@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: sep-product-service
+  config.import: "optional:configserver:"
+  cloud.config.discovery:
+    enabled: false
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+
+kafka:
+  bootstrap-server:
+    url: localhost
+    port: 9092
+    consumer-group-id: sep-product-group
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+api:
+  prefix: /products
