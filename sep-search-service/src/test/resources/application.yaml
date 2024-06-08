@@ -1,0 +1,17 @@
+spring:
+  application.name: sep-search-service
+  config.import: "optional:configserver:"
+  cloud.config.discovery:
+    enabled: false
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+elasticsearch:
+  host:
+  port:
+
+api:
+  prefix: /search
