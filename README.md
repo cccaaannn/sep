@@ -1,6 +1,18 @@
-# Sep
+# SEP
 
-Simple microservice project with spring cloud and various other technologies
+**S**pring **E**-commerce **P**roject is a simple microservice project with spring cloud and various other technologies
+
+---
+
+## Architecture Diagram
+
+![architecture-diagram](/sep-docs/architecture-diagram.drawio.svg)
+
+---
+
+## Events Diagram
+
+![architecture-diagram](/sep-docs/events-diagram.drawio.svg)
 
 ---
 
