@@ -4,6 +4,18 @@
 
 ---
 
+## Table of Contents
+- [Architecture Diagram](#architecture-diagram)
+- [Events Diagram](#events-diagram)
+- [Infrastructure Services](#infrastructure-services)
+  - [sep-discovery-service](#1-sep-discovery-service)
+  - [sep-config-service](#2-sep-config-service)
+  - [sep-gateway-service](#3-sep-gateway-service)
+- [Application Services](#application-services)
+  - [sep-product-service](#1-sep-product-service)
+  - [sep-payment-service](#2-sep-payment-service)
+  - [sep-search-service](#3-sep-search-service)
+
 ## Architecture Diagram
 
 ![architecture-diagram](/sep-docs/architecture-diagram.drawio.svg)
@@ -26,7 +38,7 @@
     1. Encrypt a value using config server `curl <CONFIG_SERVICE_URL>/encrypt -s -d <VALUE>`
 3. Spring actuator
     1. Refresh variables `curl -X POST <APPLICATION_SERVICE_URL>/actuator/refresh`
-### 2. sep-gateway-service
+### 3. sep-gateway-service
 1. Java 22 spring boot 3.5
 2. Spring cloud gateway
 3. Spring cache
