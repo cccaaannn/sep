@@ -1,0 +1,26 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+logging:
+  level:
+    root: WARN
+    org.springframework: INFO
+    com.kurtcan: DEBUG
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger
+    docExpansion: none
+    tagsSorter: alpha
+    operationsSorter: alpha
