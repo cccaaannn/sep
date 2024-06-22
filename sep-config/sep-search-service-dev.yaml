@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        registerHealthIndicator: true
+    instances:
+      circuitbreaker-product-service:
+        baseConfig: default
+      circuitbreaker-payment-service:
+        baseConfig: default
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500
+    circuitbreaker-product-service:
+      baseConfig: default
+    circuitbreaker-payment-service:
+      baseConfig: default
+
+kafka:
+  bootstrap-server:
+    host: <KAFKA-HOST>
+    port: 9092
+    consumer-group-id: sep-search-group
+
+logstash:
+  host: <LOGSTASH-HOST>
+  port: 5000
+
+elasticsearch:
+  host: <ELASTICSEARCH-HOST>
+  port: 9200
+
+api:
+  prefix: /search
