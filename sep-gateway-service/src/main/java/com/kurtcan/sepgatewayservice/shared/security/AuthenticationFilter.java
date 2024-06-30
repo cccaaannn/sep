@@ -1,5 +1,6 @@
 package com.kurtcan.sepgatewayservice.shared.security;
 
+import com.kurtcan.sepgatewayservice.shared.jwt.AccessTokenPayload;
 import com.kurtcan.sepgatewayservice.shared.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -56,7 +57,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isTokenValid(String token) {
-        return jwtUtils.isTokenValid(token);
+        return jwtUtils.decodeToken(token, AccessTokenPayload.class).isPresent();
     }
 
     private Optional<String> getBearerToken(ServerHttpRequest request) {

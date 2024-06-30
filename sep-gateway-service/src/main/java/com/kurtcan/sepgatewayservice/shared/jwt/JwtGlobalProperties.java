@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @RefreshScope
-@ConfigurationProperties(prefix = "jwt")
-public class JwtProperties {
+@ConfigurationProperties(prefix = "jwt-global")
+public class JwtGlobalProperties {
     private String publicKeyBase64;
     private int allowedClockSkewInSeconds;
     private String issuer;
+    private String tokenEndpoint;
 }
