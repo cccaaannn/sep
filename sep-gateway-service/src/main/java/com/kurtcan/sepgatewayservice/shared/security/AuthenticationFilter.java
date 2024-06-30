@@ -24,7 +24,7 @@ import java.util.Optional;
 @ConditionalOnProperty(prefix = "authentication-filter", name = "enabled")
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
-    private final SecurityProperties securityProperties;
+    private final SecurityGlobalProperties securityGlobalProperties;
     private final JwtUtils jwtUtils;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -49,8 +49,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isSecured(ServerHttpRequest request) {
-        return securityProperties
-                .getGlobalWhiteList()
+        return securityGlobalProperties
+                .getWhiteListPaths()
                 .stream()
                 .noneMatch(uri -> pathMatcher.match(uri, request.getURI().getPath()));
     }

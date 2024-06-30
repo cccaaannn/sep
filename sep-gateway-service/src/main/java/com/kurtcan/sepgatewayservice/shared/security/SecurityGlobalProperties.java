@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Component
 @RefreshScope
-@ConfigurationProperties(prefix = "security")
-public class SecurityProperties {
-    private List<String> globalWhiteList;
+@ConfigurationProperties(prefix = "security-global")
+public class SecurityGlobalProperties {
+    private List<String> whiteListPaths;
 }
