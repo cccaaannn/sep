@@ -25,7 +25,7 @@ import java.util.UUID;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}")
+@RequestMapping("/products")
 @Tag(name = "Products", description = "Product operations")
 public class ProductController extends BaseController {
 
