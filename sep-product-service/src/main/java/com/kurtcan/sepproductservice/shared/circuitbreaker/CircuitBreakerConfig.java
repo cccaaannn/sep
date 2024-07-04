@@ -17,4 +17,8 @@ public class CircuitBreakerConfig {
         return circuitBreakerFactory.create(CircuitBreakerName.PAYMENT);
     }
 
+    @Bean(CircuitBreakerName.TOKEN)
+    public CircuitBreaker tokenClientCircuitBreaker() {
+        return circuitBreakerFactory.create(CircuitBreakerName.TOKEN);
+    }
 }
