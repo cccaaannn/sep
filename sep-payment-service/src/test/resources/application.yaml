@@ -16,5 +16,11 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
 
-api:
-  prefix: /payments
+jwt-global:
+  allowed-clock-skew-in-seconds: 30
+  public-key-base64: ""
+  issuer: ""
+  token-endpoint: ""
+
+security-global:
+  white-list-paths: []
