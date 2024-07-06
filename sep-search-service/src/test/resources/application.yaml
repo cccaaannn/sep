@@ -10,8 +10,14 @@ eureka:
     fetchRegistry: false
 
 elasticsearch:
-  host:
-  port:
+  host: ""
+  port: ""
 
-api:
-  prefix: /search
+jwt-global:
+  allowed-clock-skew-in-seconds: 30
+  public-key-base64: ""
+  issuer: ""
+  token-endpoint: ""
+
+security-global:
+  white-list-paths: []
