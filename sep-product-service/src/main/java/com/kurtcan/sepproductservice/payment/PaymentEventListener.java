@@ -7,6 +7,7 @@ import com.kurtcan.sepproductservice.product.ProductRepository;
 import com.kurtcan.sepproductservice.shared.circuitbreaker.CircuitBreakerName;
 import com.kurtcan.sepproductservice.shared.constant.ProfileName;
 import com.kurtcan.sepproductservice.shared.event.SimpleEvent;
+import com.kurtcan.sepproductservice.shared.jwt.TokenClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
@@ -35,7 +36,8 @@ public class PaymentEventListener {
     private final ProductRepository productRepository;
     private final PaymentServiceClient paymentServiceClient;
     @Qualifier(CircuitBreakerName.PAYMENT)
-    private final CircuitBreaker paynemtServiceCircuitBreaker;
+    private final CircuitBreaker paymentServiceCircuitBreaker;
+    private final TokenClient tokenClient;
 
     @Transactional
     @CacheEvict(value = "products", allEntries = true)
@@ -64,10 +66,22 @@ public class PaymentEventListener {
         Optional<SimpleEvent> event = deserializeEvent(message);
         if (event.isEmpty()) return;
 
-        Optional<Payment> paymentOptional = paynemtServiceCircuitBreaker.run(() -> paymentServiceClient.getPaymentById(event.get().getId()), throwable -> {
-            log.error("Error while fetching payment from service: {}", throwable.getMessage());
-            return Optional.empty();
-        });
+        Optional<TokenClient.TokenResponse> tokenOptional = tokenClient.getTokenWithCircuitBreaker();
+        if (tokenOptional.isEmpty()) {
+            log.error("Token not found");
+            return;
+        }
+        log.info("Acquired access token: {}", tokenOptional.get().accessToken());
+
+        Optional<Payment> paymentOptional = paymentServiceCircuitBreaker.run(
+                () -> paymentServiceClient.getPaymentById(
+                        event.get().getId(),
+                        STR."Bearer \{tokenOptional.get().accessToken()}"
+                ),
+                throwable -> {
+                    log.error("Error while fetching payment from service: {}", throwable.getMessage());
+                    return Optional.empty();
+                });
 
         if (paymentOptional.isEmpty()) {
             log.error("Payment not found with id: {}", event.get().getId());
