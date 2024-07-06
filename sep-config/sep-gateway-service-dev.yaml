@@ -1,0 +1,58 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: discovery-service
+          uri: lb://sep-discovery-service
+          predicates:
+            - Path=/eureka-dashboard/**, /eureka/**
+
+        - id: product-service
+          uri: lb://sep-product-service
+          predicates:
+            - Path=/products/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /products(?<segment>.*)
+                replacement: $\{segment}
+
+        - id: payment-service
+          uri: lb://sep-payment-service
+          predicates:
+            - Path=/payments/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /payments(?<segment>.*)
+                replacement: $\{segment}
+
+        - id: search-service
+          uri: lb://sep-search-service
+          predicates:
+            - Path=/search/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /search(?<segment>.*)
+                replacement: $\{segment}
+
+springdoc:
+  swagger-ui:
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: Gateway Service
+        primaryName: API Gateway Service
+      - url: /products/v3/api-docs
+        name: Product Service
+        primaryName: Product Service
+      - url: /payments/v3/api-docs
+        name: Payment Service
+        primaryName: Payment Service
+      - url: /search/v3/api-docs
+        name: Search Service
+        primaryName: Search Service
+
+authentication-filter:
+  enabled: true

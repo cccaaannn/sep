@@ -1,58 +1,21 @@
-server:
-  port: 8081
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://<DB-HOST>:3306/sep_product?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Etc/GMT
+    url: jdbc:mysql://<MYSQL-HOST>:3306/sep_product?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Etc/GMT
     username: root
-    password: "{cipher}<DB-PASSWORD>"
+    password: "{cipher}<MYSQL-PASSWORD>"
   jpa:
     show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        slidingWindowSize: 100
-        minimumNumberOfCalls: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 10s
-        failureRateThreshold: 50
-        eventConsumerBufferSize: 10
-        registerHealthIndicator: true
-    instances:
-      circuitbreaker-payment-service:
-        baseConfig: default
-  bulkhead:
-    configs:
-      default:
-        maxConcurrentCalls: 10
-        maxWaitDuration: 500
-    circuitbreaker-payment-service:
-      baseConfig: default
+    hibernate.ddl-auto: update
+    properties.hibernate.format_sql: true
 
 redis:
-  host: <REDIS-HOST>
-  port: 6379
-  cache-name-prefix: "sep-product-service-"
-  default-cache-ttl-minutes: 60
+  cache-name-prefix: sep-product-service-
 
 kafka:
-  bootstrap-server:
-    host: <KAFKA-HOST>
-    port: 9092
-    consumer-group-id: sep-product-group
+  consumer:
+    group-id: sep-product-group
 
-logstash:
-  host: <LOGSTASH-HOST>
-  port: 5000
-
-api:
-  prefix: /products
+jwt:
+  client-id: sep-product-service
+  client-secret: "{cipher}<KEYCLOAK-CLIENT-SECRET>"

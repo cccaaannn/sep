@@ -1,48 +1,17 @@
-server:
-  port: 8082
-
 spring:
   data:
     mongodb:
-      host: <DB-HOST>
+      host: <MONGO-HOST>
       port: 27017
       database: sep_payment
       username: admin
-      password: "{cipher}<DB-PASSWORD>"
+      password: "{cipher}<MONGO-PASSWORD>"
       authentication-database: admin
 
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        slidingWindowSize: 100
-        minimumNumberOfCalls: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 10s
-        failureRateThreshold: 50
-        eventConsumerBufferSize: 10
-        registerHealthIndicator: true
-    instances:
-      circuitbreaker-product-service:
-        baseConfig: default
-  bulkhead:
-    configs:
-      default:
-        maxConcurrentCalls: 10
-        maxWaitDuration: 500
-    circuitbreaker-product-service:
-      baseConfig: default
-
 kafka:
-  bootstrap-server:
-    host: <KAFKA-HOST>
-    port: 9092
-    consumer-group-id: sep-payment-group
+  consumer:
+    group-id: sep-payment-group
 
-logstash:
-  host: <LOGSTASH-HOST>
-  port: 5000
-
-api:
-  prefix: /payments
+jwt:
+  client-id: sep-payment-service
+  client-secret: "{cipher}<KEYCLOAK-CLIENT-SECRET>"
