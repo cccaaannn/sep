@@ -1,6 +1,8 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+  # To prevent autoconfigure errors on startup
+  kafka.bootstrap-servers: "${kafka.bootstrap-servers}"
 
 management:
   endpoints:
@@ -24,3 +26,65 @@ springdoc:
     docExpansion: none
     tagsSorter: alpha
     operationsSorter: alpha
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        registerHealthIndicator: true
+    instances:
+      circuitbreaker-product-service:
+        baseConfig: default
+      circuitbreaker-payment-service:
+        baseConfig: default
+      circuitbreaker-token-client:
+        baseConfig: default
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500
+    circuitbreaker-product-service:
+      baseConfig: default
+    circuitbreaker-payment-service:
+      baseConfig: default
+    circuitbreaker-token-client:
+      baseConfig: default
+
+redis:
+  host: <REDIS-HOST>
+  port: 6379
+  default-cache-ttl-minutes: 60
+
+kafka:
+  bootstrap-servers: <KAFKA-HOST>:9092
+
+elasticsearch:
+  host: <ELASTIC-HOST>
+  port: 9200
+
+logstash:
+  host: <LOGSTASH-HOST>
+  port: 5000
+
+jwt-global:
+  allowed-clock-skew-in-seconds: 30
+  public-key-base64: <KEYCLOAK-REALM-PUBLIC-KEY>
+  issuer: https://<KEYCLOAK-HOST>/realms/sep
+  token-endpoint: https://<KEYCLOAK-HOST>/realms/sep/protocol/openid-connect/token
+
+security-global:
+  white-list-paths:
+    - /**/v3/api-docs/**
+    - /swagger/**
+    - /swagger-ui/**
+    - /webjars/swagger-ui/**
+    - /eureka-dashboard/**
+    - /eureka/**
