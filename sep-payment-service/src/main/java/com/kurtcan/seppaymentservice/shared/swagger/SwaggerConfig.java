@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         servers = {
-                @Server(url = "/", description = "Server base path")
+                @Server(url = "/", description = "Server base path for direct access"),
+                @Server(url = "/payments", description = "Server base path for gateway")
         },
         security = @SecurityRequirement(name = "BearerAuth")
 )
