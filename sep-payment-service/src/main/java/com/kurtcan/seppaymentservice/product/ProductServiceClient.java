@@ -27,10 +27,11 @@ public class ProductServiceClient {
         return WebClient.create(uri.toString());
     }
 
-    public Mono<Product> getProduct(UUID id) {
+    public Mono<Product> getProduct(UUID id, String token) {
         WebClient webClient = webClient();
         return webClient.get()
                 .uri("/products/{id}", id)
+                .header("Authorization", STR."Bearer \{token}")
                 .retrieve()
                 .bodyToMono(Product.class);
     }

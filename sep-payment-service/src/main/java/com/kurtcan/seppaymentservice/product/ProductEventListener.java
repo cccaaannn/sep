@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kurtcan.seppaymentservice.shared.circuitbreaker.CircuitBreakerName;
 import com.kurtcan.seppaymentservice.shared.constant.ProfileName;
 import com.kurtcan.seppaymentservice.shared.event.SimpleEvent;
+import com.kurtcan.seppaymentservice.shared.jwt.TokenClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
@@ -37,6 +38,7 @@ public class ProductEventListener {
     private final ProductServiceClient productServiceClient;
     @Qualifier(CircuitBreakerName.PRODUCT)
     private final CircuitBreaker productServiceCircuitBreaker;
+    private final TokenClient tokenClient;
 
     @Transactional
     @RetryableTopic(
@@ -64,7 +66,13 @@ public class ProductEventListener {
         Optional<SimpleEvent> event = deserializeEvent(message);
         if (event.isEmpty()) return;
 
-        addOrUpdateProduct(event.get());
+        TokenClient.TokenResponse tokenResponse = tokenClient.getTokenWithCircuitBreaker().block();
+        if (Objects.isNull(tokenResponse)) {
+            log.error("Could not get access token");
+            return;
+        }
+
+        addOrUpdateProduct(event.get(), tokenResponse.accessToken());
     }
 
     @Transactional
@@ -93,7 +101,13 @@ public class ProductEventListener {
         Optional<SimpleEvent> event = deserializeEvent(message);
         if (event.isEmpty()) return;
 
-        addOrUpdateProduct(event.get());
+        TokenClient.TokenResponse tokenResponse = tokenClient.getTokenWithCircuitBreaker().block();
+        if (Objects.isNull(tokenResponse)) {
+            log.error("Could not get access token");
+            return;
+        }
+
+        addOrUpdateProduct(event.get(), tokenResponse.accessToken());
     }
 
     @Transactional
@@ -125,8 +139,8 @@ public class ProductEventListener {
         productRepository.deleteById(event.get().getId()).subscribe();
     }
 
-    private void addOrUpdateProduct(SimpleEvent event) {
-        productServiceCircuitBreaker.run(() -> productServiceClient.getProduct(event.getId()), throwable -> {
+    private void addOrUpdateProduct(SimpleEvent event, String token) {
+        productServiceCircuitBreaker.run(() -> productServiceClient.getProduct(event.getId(), token), throwable -> {
                     log.error("Error while fetching product from service: {}", throwable.getMessage());
                     return Mono.<Product>empty();
                 })
