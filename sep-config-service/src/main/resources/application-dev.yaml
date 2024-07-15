@@ -4,7 +4,7 @@ spring:
       server.git:
           default-label: master
           search-paths: sep-config
-          uri: ../sep-config
+          uri: ../
       fail-fast: true
 
 eureka.client.service-url.defaultZone: http://localhost:8090/eureka/
