@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/payments")
+@RequestMapping("/search/payments")
 @Tag(name = "Payments", description = "Payment search operations")
 public class PaymentController extends BaseController {
 
