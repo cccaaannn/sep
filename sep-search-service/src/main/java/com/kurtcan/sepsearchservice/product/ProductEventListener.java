@@ -6,6 +6,7 @@ import com.kurtcan.sepsearchservice.shared.circuitbreaker.CircuitBreakerName;
 import com.kurtcan.sepsearchservice.shared.constant.ProfileName;
 import com.kurtcan.sepsearchservice.shared.elasticsearch.SimpleElasticsearchClient;
 import com.kurtcan.sepsearchservice.shared.event.SimpleEvent;
+import com.kurtcan.sepsearchservice.shared.jwt.TokenClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
@@ -33,6 +34,7 @@ public class ProductEventListener {
     @Qualifier(CircuitBreakerName.PRODUCT)
     private final CircuitBreaker productServiceCircuitBreaker;
     private final SimpleElasticsearchClient elasticsearchClient;
+    private final TokenClient tokenClient;
 
     @RetryableTopic(
             kafkaTemplate = "kafkaTemplate",
@@ -119,7 +121,18 @@ public class ProductEventListener {
     }
 
     private void addOrUpdateProduct(SimpleEvent event) {
-        Optional<Product> productOptional = productServiceCircuitBreaker.run(() -> productServiceClient.getProductById(event.getId()), throwable -> {
+        Optional<TokenClient.TokenResponse> tokenOptional = tokenClient.getTokenWithCircuitBreaker();
+        if (tokenOptional.isEmpty()) {
+            log.error("Token not found");
+            return;
+        }
+        log.info("Acquired access token: {}", tokenOptional.get().accessToken());
+
+        Optional<Product> productOptional = productServiceCircuitBreaker.run(
+                () -> productServiceClient.getProductById(
+                        event.getId(),
+                        STR."Bearer \{tokenOptional.get().accessToken()}"
+                ), throwable -> {
             log.error("Error while fetching product from service: {}", throwable.getMessage());
             return Optional.empty();
         });
