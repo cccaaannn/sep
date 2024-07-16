@@ -6,6 +6,7 @@ import com.kurtcan.sepsearchservice.shared.circuitbreaker.CircuitBreakerName;
 import com.kurtcan.sepsearchservice.shared.constant.ProfileName;
 import com.kurtcan.sepsearchservice.shared.elasticsearch.SimpleElasticsearchClient;
 import com.kurtcan.sepsearchservice.shared.event.SimpleEvent;
+import com.kurtcan.sepsearchservice.shared.jwt.TokenClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
@@ -33,6 +34,7 @@ public class PaymentEventListener {
     @Qualifier(CircuitBreakerName.PAYMENT)
     private final CircuitBreaker paynemtServiceCircuitBreaker;
     private final SimpleElasticsearchClient elasticsearchClient;
+    private final TokenClient tokenClient;
 
     @RetryableTopic(
             kafkaTemplate = "kafkaTemplate",
@@ -59,7 +61,19 @@ public class PaymentEventListener {
         Optional<SimpleEvent> event = deserializeEvent(message);
         if (event.isEmpty()) return;
 
-        Optional<Payment> paymentOptional = paynemtServiceCircuitBreaker.run(() -> paymentServiceClient.getPaymentById(event.get().getId()), throwable -> {
+        Optional<TokenClient.TokenResponse> tokenOptional = tokenClient.getTokenWithCircuitBreaker();
+        if (tokenOptional.isEmpty()) {
+            log.error("Token not found");
+            return;
+        }
+        log.info("Acquired access token: {}", tokenOptional.get().accessToken());
+
+        Optional<Payment> paymentOptional = paynemtServiceCircuitBreaker.run(
+                () -> paymentServiceClient.getPaymentById(
+                        event.get().getId(),
+                        STR."Bearer \{tokenOptional.get().accessToken()}"
+                ),
+                throwable -> {
             log.error("Error while fetching payment from service: {}", throwable.getMessage());
             return Optional.empty();
         });
