@@ -2,10 +2,18 @@ package com.kurtcan.sepsearchservice.shared.jwt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.UUID;
 
-public record AccessTokenPayload(
-        @JsonProperty("sub") UUID id,
-        @JsonProperty("roles") String[] roles
-) {
+@Data
+@Builder
+public class AccessTokenPayload {
+	@JsonProperty("sub")
+	private UUID id;
+	@EqualsAndHashCode.Exclude
+	@JsonProperty("roles")
+	private String[] roles;
 }

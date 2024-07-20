@@ -2,6 +2,9 @@ package com.kurtcan.seppaymentservice.shared.security;
 
 import com.kurtcan.seppaymentservice.shared.jwt.AccessTokenPayload;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -13,12 +16,16 @@ public class CurrentUserService {
 
     private final String CURRENT_USER = "currentUser";
 
+    @Data
     @Builder
-    public record CurrentUser(UUID id, String[] roles) {
+    public static class CurrentUser {
+        private UUID id;
+        @EqualsAndHashCode.Exclude
+        private String[] roles;
     }
 
     public void fromAccessTokenPayload(ServerWebExchange exchange, AccessTokenPayload accessTokenPayload) {
-        CurrentUser currentUser = CurrentUser.builder().id(accessTokenPayload.id()).roles(accessTokenPayload.roles()).build();
+        CurrentUser currentUser = CurrentUser.builder().id(accessTokenPayload.getId()).roles(accessTokenPayload.getRoles()).build();
         exchange.getAttributes().put(CURRENT_USER, currentUser);
     }
 
