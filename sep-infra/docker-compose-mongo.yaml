@@ -1,0 +1,51 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    networks:
+      - sep-bridge-network
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: sep_pass
+      MONGO_INITDB_DATABASE: sep_payment
+    volumes:
+      - ./infra-data/mongo/data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    networks:
+      - sep-bridge-network
+    ports:
+      - 1002:8081
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_MONGODB_AUTH_USERNAME: root
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: sep_pass
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: sep_pass
+    volumes: 
+      - ./infra-data/mongo/mongo-express:/data/db
+    depends_on:
+      - mongo
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
