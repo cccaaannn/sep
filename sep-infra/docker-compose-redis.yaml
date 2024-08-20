@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis
+    container_name: redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    networks:
+      - sep-bridge-network
+    ports:
+      - 6379:6379
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./infra-data/redis/data:/data
+
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: redis-commander
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    networks:
+      - sep-bridge-network
+    ports:
+      - 1003:8081
+    environment:
+      - REDIS_HOSTS: local:redis:6379
+      - HTTP_USER: admin
+      - HTTP_PASSWORD: admin
+    depends_on:
+      - redis
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
