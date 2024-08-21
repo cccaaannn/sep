@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: quay.io/keycloak/keycloak:23.0.3
+    container_name: keycloak
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    networks:
+      - sep-bridge-network
+    ports:
+      - 1006:8080
+    environment:
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+      KC_PROXY: edge
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: sep_keycloak
+    volumes:
+      - ./infra-data/keycloak/data:/opt/keycloak/data
+    command: start
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
