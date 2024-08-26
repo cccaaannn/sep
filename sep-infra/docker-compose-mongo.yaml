@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:7.0.8
     container_name: mongo
     restart: unless-stopped
     deploy:
@@ -19,7 +19,7 @@ services:
       - ./infra-data/mongo/data:/data/db
 
   mongo-express:
-    image: mongo-express:latest
+    image: mongo-express:1.0.2
     container_name: mongo-express
     restart: unless-stopped
     deploy:

@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0.39
     container_name: mysql
     restart: unless-stopped
     deploy:
@@ -18,7 +18,7 @@ services:
       - ./infra-data/mysql/data:/var/lib/mysql
 
   mysql-phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2.1
     container_name: phpmyadmin
     restart: unless-stopped
     deploy:
