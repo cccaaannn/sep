@@ -1,0 +1,22 @@
+services:
+  sep-gateway-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sep-gateway-service
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    networks:
+      - sep-bridge-network
+    ports:
+      - 8093:8093
+    environment:
+      eureka_client_service-url_defaultZone: http://sep-discovery-service:8090/eureka/
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
