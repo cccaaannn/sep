@@ -1,0 +1,24 @@
+services:
+  sep-config-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sep-config-service
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    networks:
+      - sep-bridge-network
+    environment:
+      eureka_client_service-url_defaultZone: http://sep-discovery-service:8090/eureka/
+      spring_cloud_config_server_git_uri: /config-repo
+    volumes:
+      # Change the host machine path to config repo path
+      - ../:/config-repo
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
