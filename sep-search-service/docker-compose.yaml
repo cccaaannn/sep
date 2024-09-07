@@ -1,0 +1,20 @@
+services:
+  sep-search-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sep-search-service
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    networks:
+      - sep-bridge-network
+    environment:
+      eureka_client_service-url_defaultZone: http://sep-discovery-service:8090/eureka/
+
+networks:
+  sep-bridge-network:
+    name: sep-bridge-network
+    external: true
