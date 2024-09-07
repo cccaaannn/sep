@@ -148,7 +148,7 @@ mvn spring-boot:run
 You need to run many infrastructure services before starting the actual applications, to have a better dev experience I suggest running infrastructure related applications on a cloud vps.
 1. Preliminary steps
     1. Have `Java >22`, `Maven >3` and `Kotlin >2` on your path
-    2. Move to projects root folder
+    2. Move to project's root folder
         - Commands are adjusted for project's root
 2. Run infrastructure in docker
     - Check [Infrastructure Setup](/sep-infra/README.md) for more details
