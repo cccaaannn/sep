@@ -24,6 +24,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @Slf4j
@@ -76,7 +77,7 @@ public class PaymentEventListener {
         Optional<Payment> paymentOptional = paymentServiceCircuitBreaker.run(
                 () -> paymentServiceClient.getPaymentById(
                         event.get().getId(),
-                        STR."Bearer \{tokenOptional.get().accessToken()}"
+                        MessageFormat.format("Bearer {0}", tokenOptional.get().accessToken())
                 ),
                 throwable -> {
                     log.error("Error while fetching payment from service: {}", throwable.getMessage());

@@ -2,14 +2,14 @@ package com.kurtcan.sepproductservice.shared.jwt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.UUID;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AccessTokenPayload {
 	@JsonProperty("sub")
 	private UUID id;
