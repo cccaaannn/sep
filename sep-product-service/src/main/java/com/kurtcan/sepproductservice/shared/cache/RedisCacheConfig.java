@@ -3,6 +3,8 @@ package com.kurtcan.sepproductservice.shared.cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kurtcan.sepproductservice.shared.constant.ProfileName;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,10 +20,12 @@ import java.time.Duration;
 @Configuration
 @RequiredArgsConstructor
 @Profile("!" + ProfileName.TEST)
-public class RedisConfig {
+@ConditionalOnProperty(prefix = "redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class RedisCacheConfig {
 
-    private final RedisProperties redisProperties;
+    @Qualifier("redisObjectMapper")
     private final ObjectMapper redisObjectMapper;
+    private final RedisProperties redisProperties;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

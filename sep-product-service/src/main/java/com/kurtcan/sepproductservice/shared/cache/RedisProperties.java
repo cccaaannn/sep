@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "redis")
 public class RedisProperties {
+    private boolean enabled;
     private String host;
     private int port;
     private String cacheNamePrefix;
