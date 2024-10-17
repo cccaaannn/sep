@@ -1,4 +1,4 @@
-package com.kurtcan.sepproductservice.shared.cache;
+package com.kurtcan.sepproductservice.shared.cache.redis;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
