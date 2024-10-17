@@ -2,6 +2,7 @@ package com.kurtcan.sepproductservice.product;
 
 import com.kurtcan.sepproductservice.product.request.ProductAdd;
 import com.kurtcan.sepproductservice.product.request.ProductUpdate;
+import com.kurtcan.sepproductservice.shared.cache.CacheName;
 import com.kurtcan.sepproductservice.shared.event.JsonEventPublisher;
 import com.kurtcan.sepproductservice.shared.event.SimpleEvent;
 import com.kurtcan.sepproductservice.shared.exception.ResourceNotFoundException;
@@ -25,7 +26,7 @@ import java.util.UUID;
 @Service
 @Builder
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "products")
+@CacheConfig(cacheNames = CacheName.PRODUCTS)
 public class ProductServiceImpl implements ProductService {
 
     private final JsonEventPublisher eventPublisher;
