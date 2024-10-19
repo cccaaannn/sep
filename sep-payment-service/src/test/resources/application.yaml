@@ -5,16 +5,19 @@ spring:
   cloud.config.discovery:
     enabled: false
 
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+logstash:
+  enabled: false
+
 kafka:
   bootstrap-server:
     url: localhost
     port: 9092
     consumer-group-id: sep-payment-group
-
-eureka:
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
 
 jwt-global:
   allowed-clock-skew-in-seconds: 30

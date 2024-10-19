@@ -9,6 +9,9 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
 
+logstash:
+  enabled: false
+
 elasticsearch:
   host: ""
   port: ""
