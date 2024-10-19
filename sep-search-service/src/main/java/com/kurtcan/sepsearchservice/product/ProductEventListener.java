@@ -21,6 +21,7 @@ import org.springframework.kafka.support.serializer.DeserializationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @Slf4j
@@ -59,7 +60,8 @@ public class ProductEventListener {
         log.info("Received event {}:{}", ProductEventTopic.PRODUCT_CREATED, message);
 
         Optional<SimpleEvent> event = deserializeEvent(message);
-        if (event.isEmpty()) return;
+        if (event.isEmpty())
+            return;
 
         addOrUpdateProduct(event.get());
     }
@@ -87,7 +89,8 @@ public class ProductEventListener {
         log.info("Received event {}:{}", ProductEventTopic.PRODUCT_UPDATED, message);
 
         Optional<SimpleEvent> event = deserializeEvent(message);
-        if (event.isEmpty()) return;
+        if (event.isEmpty())
+            return;
 
         addOrUpdateProduct(event.get());
     }
@@ -115,7 +118,8 @@ public class ProductEventListener {
         log.info("Received event {}:{}", ProductEventTopic.PRODUCT_DELETED, message);
 
         Optional<SimpleEvent> event = deserializeEvent(message);
-        if (event.isEmpty()) return;
+        if (event.isEmpty())
+            return;
 
         elasticsearchClient.deleteById(ProductElasticIndex.NAME, event.get().getId());
     }
@@ -131,11 +135,11 @@ public class ProductEventListener {
         Optional<Product> productOptional = productServiceCircuitBreaker.run(
                 () -> productServiceClient.getProductById(
                         event.getId(),
-                        STR."Bearer \{tokenOptional.get().accessToken()}"
-                ), throwable -> {
-            log.error("Error while fetching product from service: {}", throwable.getMessage());
-            return Optional.empty();
-        });
+                        MessageFormat.format("Bearer {0}", tokenOptional.get().accessToken())),
+                throwable -> {
+                    log.error("Error while fetching product from service: {}", throwable.getMessage());
+                    return Optional.empty();
+                });
 
         if (productOptional.isEmpty()) {
             log.error("Product not found with id: {}", event.getId());

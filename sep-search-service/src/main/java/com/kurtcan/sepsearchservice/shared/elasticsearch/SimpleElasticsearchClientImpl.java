@@ -12,6 +12,7 @@ import org.elasticsearch.client.RestClient;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
     public <T extends ElasticsearchEntity> Optional<Response> save(String index, T object) {
         Map<String, Object> objectMap = objectMapper.convertValue(object, new TypeReference<>() {
         });
-        Request request = new Request("PUT", STR."/\{index}/_doc/\{object.getId().toString()}");
+        Request request = new Request("PUT", MessageFormat.format("/{0}/_doc/{1}", index, object.getId().toString()));
         try {
             request.setJsonEntity(objectMapper.writeValueAsString(objectMap));
             Response response = client.performRequest(request);
@@ -44,7 +45,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
 
     @Override
     public Optional<Response> deleteById(String index, UUID id) {
-        Request request = new Request("DELETE", STR."/\{index}/_doc/\{id.toString()}");
+        Request request = new Request("DELETE", MessageFormat.format("/{0}/_doc/{1}", index, id.toString()));
         try {
             Response response = client.performRequest(request);
             log.debug("{} Delete response: {}", index, response.getStatusLine().getStatusCode());
@@ -57,7 +58,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
 
     @Override
     public Optional<Response> deleteIndex(String index) {
-        Request request = new Request("DELETE", STR."/\{index}");
+        Request request = new Request("DELETE", MessageFormat.format("/{0}", index));
         try {
             Response response = client.performRequest(request);
             log.debug("{} Delete response: {}", index, response.getStatusLine().getStatusCode());
@@ -70,7 +71,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
 
     @Override
     public <T> Optional<List<T>> searchMultiFuzzy(String index, Map<String, String> searchMap, Class<T> clas) {
-        Request request = new Request("GET", STR."/\{index}/_search");
+        Request request = new Request("GET", MessageFormat.format("/{0}/_search", index));
 
         StringBuilder body = new StringBuilder();
 
@@ -78,7 +79,8 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
         body.append("\"query\": ")
                 .append("\"").append(String.join(" ", searchMap.values())).append("\"").append(",")
                 .append("\"fields\": [")
-                .append(searchMap.keySet().stream().map(key -> STR."\"\{key}\"").collect(Collectors.joining(",")))
+                .append(searchMap.keySet().stream().map(key -> MessageFormat.format("\"{0}\"", key))
+                        .collect(Collectors.joining(",")))
                 .append("],\"fuzziness\": 2");
         body.append("}}}");
 
@@ -89,8 +91,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
             Response response = client.performRequest(request);
             ElasticsearchResponse<T> esResponse = objectMapper.readValue(
                     EntityUtils.toString(response.getEntity()),
-                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas)
-            );
+                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas));
 
             List<T> results = esResponse.getHits().getHits().stream()
                     .map(ElasticsearchResponse.Hit::getSource)
@@ -103,10 +104,9 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
         return Optional.empty();
     }
 
-
     @Override
     public <T> Optional<List<T>> searchFuzzy(String index, String key, String value, Class<T> clas) {
-        Request request = new Request("GET", STR."/\{index}/_search");
+        Request request = new Request("GET", MessageFormat.format("/{0}/_search", index));
 
         StringBuilder body = new StringBuilder();
 
@@ -125,8 +125,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
             Response response = client.performRequest(request);
             ElasticsearchResponse<T> esResponse = objectMapper.readValue(
                     EntityUtils.toString(response.getEntity()),
-                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas)
-            );
+                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas));
 
             List<T> results = esResponse.getHits().getHits().stream()
                     .map(ElasticsearchResponse.Hit::getSource)
@@ -141,11 +140,11 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
 
     @Override
     public <T> Optional<List<T>> match(String index, String key, String value, Class<T> clas) {
-        Request request = new Request("GET", STR."/\{index}/_search");
+        Request request = new Request("GET", MessageFormat.format("/{0}/_search", index));
 
         StringBuilder body = new StringBuilder();
         body.append("{\"query\": {\"match\": {");
-//        body.append("{\"query\": {\"match_phrase_prefix\": {");
+        // body.append("{\"query\": {\"match_phrase_prefix\": {");
         body.append("\"").append(key).append("\": \"").append(value).append("\"");
         body.append("}}}");
 
@@ -156,8 +155,7 @@ public class SimpleElasticsearchClientImpl implements SimpleElasticsearchClient 
             Response response = client.performRequest(request);
             ElasticsearchResponse<T> esResponse = objectMapper.readValue(
                     EntityUtils.toString(response.getEntity()),
-                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas)
-            );
+                    objectMapper.getTypeFactory().constructParametricType(ElasticsearchResponse.class, clas));
 
             List<T> results = esResponse.getHits().getHits().stream()
                     .map(ElasticsearchResponse.Hit::getSource)

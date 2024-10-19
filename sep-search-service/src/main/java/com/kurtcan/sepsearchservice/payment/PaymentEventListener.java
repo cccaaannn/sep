@@ -21,6 +21,7 @@ import org.springframework.kafka.support.serializer.DeserializationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @Slf4j
@@ -59,7 +60,8 @@ public class PaymentEventListener {
         log.info("Received event {}:{}", PaymentEventTopic.PAYMENT_CREATED, message);
 
         Optional<SimpleEvent> event = deserializeEvent(message);
-        if (event.isEmpty()) return;
+        if (event.isEmpty())
+            return;
 
         Optional<TokenClient.TokenResponse> tokenOptional = tokenClient.getTokenWithCircuitBreaker();
         if (tokenOptional.isEmpty()) {
@@ -71,12 +73,11 @@ public class PaymentEventListener {
         Optional<Payment> paymentOptional = paynemtServiceCircuitBreaker.run(
                 () -> paymentServiceClient.getPaymentById(
                         event.get().getId(),
-                        STR."Bearer \{tokenOptional.get().accessToken()}"
-                ),
+                        MessageFormat.format("Bearer {0}", tokenOptional.get().accessToken())),
                 throwable -> {
-            log.error("Error while fetching payment from service: {}", throwable.getMessage());
-            return Optional.empty();
-        });
+                    log.error("Error while fetching payment from service: {}", throwable.getMessage());
+                    return Optional.empty();
+                });
 
         if (paymentOptional.isEmpty()) {
             log.error("Payment not found with id: {}", event.get().getId());
