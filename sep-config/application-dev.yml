@@ -39,6 +39,7 @@ resilience4j:
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
         registerHealthIndicator: true
+        timeoutDuration: 10s
     instances:
       circuitbreaker-product-service:
         baseConfig: default
@@ -59,6 +60,7 @@ resilience4j:
       baseConfig: default
 
 redis:
+  enabled: false
   host: <REDIS-HOST>
   port: 6379
   default-cache-ttl-minutes: 60
@@ -71,6 +73,7 @@ elasticsearch:
   port: 9200
 
 logstash:
+  enabled: false
   host: <LOGSTASH-HOST>
   port: 5000
 
@@ -88,3 +91,8 @@ security-global:
     - /webjars/swagger-ui/**
     - /eureka-dashboard/**
     - /eureka/**
+
+    # Graphql security is done in the service, since body needed to be parsed
+    - /**/graphiql
+    - /**/graphql
+    
