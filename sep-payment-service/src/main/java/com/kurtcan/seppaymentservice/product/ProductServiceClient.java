@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class ProductServiceClient {
     private WebClient webClient() {
         List<ServiceInstance> instances = discoveryClient.getInstances(ServiceName.PRODUCT);
         if (instances.isEmpty()) {
-            throw new RuntimeException(STR."No instances of\{ServiceName.PRODUCT}found");
+            throw new RuntimeException(MessageFormat.format("No instances of {0} found", ServiceName.PRODUCT));
         }
         URI uri = instances.getFirst().getUri();
         return WebClient.create(uri.toString());
@@ -31,7 +32,7 @@ public class ProductServiceClient {
         WebClient webClient = webClient();
         return webClient.get()
                 .uri("/products/{id}", id)
-                .header("Authorization", STR."Bearer \{token}")
+                .header("Authorization", MessageFormat.format("Bearer {0}", token))
                 .retrieve()
                 .bodyToMono(Product.class);
     }

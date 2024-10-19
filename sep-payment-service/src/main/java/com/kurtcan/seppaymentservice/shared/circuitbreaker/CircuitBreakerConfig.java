@@ -10,15 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class CircuitBreakerConfig {
 
-    private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
-
     @Bean(CircuitBreakerName.PRODUCT)
-    public CircuitBreaker productServiceCircuitBreaker() {
+    public CircuitBreaker productServiceCircuitBreaker(Resilience4JCircuitBreakerFactory circuitBreakerFactory) {
         return circuitBreakerFactory.create(CircuitBreakerName.PRODUCT);
     }
 
     @Bean(CircuitBreakerName.TOKEN)
-    public CircuitBreaker tokenClientCircuitBreaker() {
+    public CircuitBreaker tokenClientCircuitBreaker(Resilience4JCircuitBreakerFactory circuitBreakerFactory) {
         return circuitBreakerFactory.create(CircuitBreakerName.TOKEN);
     }
 }

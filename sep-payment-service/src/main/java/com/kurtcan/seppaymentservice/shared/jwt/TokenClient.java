@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kurtcan.seppaymentservice.shared.circuitbreaker.CircuitBreakerName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.text.MessageFormat;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.http.MediaType;
@@ -21,8 +24,7 @@ public class TokenClient {
     public record TokenResponse(
             @JsonProperty("access_token") String accessToken,
             @JsonProperty("token_type") String tokenType,
-            @JsonProperty("expires_in") int expiresIn
-    ) {
+            @JsonProperty("expires_in") int expiresIn) {
     }
 
     private final JwtGlobalProperties jwtGlobalProperties;
@@ -42,7 +44,8 @@ public class TokenClient {
         final WebClient webClient = WebClient.create(jwtGlobalProperties.getTokenEndpoint());
         return webClient.post()
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .bodyValue(STR."grant_type=client_credentials&client_id=\{jwtProperties.getClientId()}&client_secret=\{jwtProperties.getClientSecret()}")
+                .bodyValue(MessageFormat.format("grant_type=client_credentials&client_id={0}&client_secret={1}",
+                        jwtProperties.getClientId(), jwtProperties.getClientSecret()))
                 .retrieve()
                 .bodyToMono(String.class)
                 .doOnNext(response -> log.info("Raw token response: {}", response))
