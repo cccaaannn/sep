@@ -27,6 +27,16 @@ public class KafkaJsonEventPublisher implements JsonEventPublisher {
     }
 
     @Override
+    public <T> void publish(String topic, DataEvent<T> event) {
+        try {
+            String eventJson = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(topic, eventJson);
+        } catch (JsonProcessingException e) {
+            log.error("Error while publishing event: {}", e.getMessage());
+        }
+    }
+
+    @Override
     public void publish(String topic, Object event) {
         try {
             String eventJson = objectMapper.writeValueAsString(event);
@@ -38,6 +48,11 @@ public class KafkaJsonEventPublisher implements JsonEventPublisher {
 
     @Override
     public Mono<Void> publishAsync(String topic, SimpleEvent event) {
+        return Mono.fromRunnable(() -> publish(topic, event));
+    }
+
+    @Override
+    public <T> Mono<Void> publishAsync(String topic, DataEvent<T> event) {
         return Mono.fromRunnable(() -> publish(topic, event));
     }
 
