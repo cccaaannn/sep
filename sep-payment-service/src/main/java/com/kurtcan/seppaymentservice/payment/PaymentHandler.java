@@ -30,14 +30,24 @@ public class PaymentHandler {
     }
 
     public Mono<ServerResponse> getPaymentById(ServerRequest request) {
-        UUID id = UUID.fromString(request.pathVariable("paymentId"));
+        UUID paymentId = UUID.fromString(request.pathVariable("paymentId"));
 
-        return paymentService.getPaymentById(id)
+        return paymentService.getPaymentById(paymentId)
                 .flatMap(payment -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(payment))
                 )
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> getByUserId(ServerRequest request) {
+        UUID userId = UUID.fromString(request.pathVariable("userId"));
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(paymentService.getByUserId(
+                        userId
+                ), Payment.class);
     }
 
     public Mono<ServerResponse> createPayment(ServerRequest request) {

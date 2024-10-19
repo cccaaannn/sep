@@ -11,5 +11,7 @@ public interface PaymentService {
 
     Mono<Payment> getPaymentById(UUID id);
 
+    Flux<Payment> getByUserId(UUID userId);
+
     Mono<Payment> createPayment(PaymentCreate payment);
 }

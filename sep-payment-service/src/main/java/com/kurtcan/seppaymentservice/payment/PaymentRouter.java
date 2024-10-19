@@ -87,6 +87,35 @@ public class PaymentRouter {
                     )
             ),
 
+            @RouterOperation(path = "/payments/user/{userId}",
+                    produces = {MediaType.APPLICATION_JSON_VALUE},
+                    method = RequestMethod.GET,
+                    beanClass = PaymentHandler.class,
+                    beanMethod = "getByUserId",
+                    operation =
+                    @Operation(
+                            operationId = "getByUserId",
+                            summary = "Get payments by user ID",
+                            parameters = {
+                                    @Parameter(name = "userId", description = "ID of the user", required = true, in = ParameterIn.PATH)
+                            },
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Success",
+                                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Payment.class)))
+                                    ),
+                                    @ApiResponse(responseCode = "400", description = "Invalid value",
+                                            content = @Content(schema = @Schema(implementation = ErrorResult.class))
+                                    ),
+                                    @ApiResponse(responseCode = "404", description = "Not found",
+                                            content = @Content(schema = @Schema(implementation = ErrorResult.class))
+                                    ),
+                                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                                            content = @Content(schema = @Schema(implementation = ErrorResult.class))
+                                    )
+                            }
+                    )
+            ),
+
             @RouterOperation(path = "/payments",
                     produces = {MediaType.APPLICATION_JSON_VALUE},
                     method = RequestMethod.POST,
@@ -120,6 +149,7 @@ public class PaymentRouter {
                         .nest(accept(APPLICATION_JSON), routerBuilder -> routerBuilder
                                 .GET("", paymentHandler::getAllPayments)
                                 .GET("/{paymentId}", paymentHandler::getPaymentById)
+                                .GET("/user/{userId}", paymentHandler::getByUserId)
                                 .POST("", paymentHandler::createPayment)
                         )
                 )

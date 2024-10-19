@@ -1,9 +1,10 @@
 package com.kurtcan.seppaymentservice.payment;
 
+import com.kurtcan.seppaymentservice.payment.event.PaymentCreated;
 import com.kurtcan.seppaymentservice.payment.request.PaymentCreate;
 import com.kurtcan.seppaymentservice.product.ProductRepository;
+import com.kurtcan.seppaymentservice.shared.event.DataEvent;
 import com.kurtcan.seppaymentservice.shared.event.JsonEventPublisher;
-import com.kurtcan.seppaymentservice.shared.event.SimpleEvent;
 import com.kurtcan.seppaymentservice.shared.exception.ResourceNotFoundException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public Flux<Payment> getByUserId(UUID userId) {
+        return paymentRepository.findByUserId(userId);
+    }
+
+    @Override
     public Mono<Payment> createPayment(PaymentCreate paymentCreate) {
         return productRepository.findById(paymentCreate.productId())
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("Product not found")))
@@ -52,7 +58,10 @@ public class PaymentServiceImpl implements PaymentService {
                     return productRepository.save(product)
                             .then(paymentRepository.save(payment))
                             .flatMap(savedPayment -> {
-                                eventPublisher.publishAsync(PaymentEventTopic.CREATED, SimpleEvent.fromEntity(savedPayment)).subscribe();
+                                PaymentCreated paymentCreated = PaymentCreated.builder().userId(savedPayment.getUserId()).productId(savedPayment.getProductId()).build();
+                                DataEvent<PaymentCreated> event = DataEvent.fromEntity(savedPayment, paymentCreated);
+
+                                eventPublisher.publishAsync(PaymentEventTopic.CREATED, event).subscribe();
                                 return Mono.just(savedPayment);
                             });
                 });
