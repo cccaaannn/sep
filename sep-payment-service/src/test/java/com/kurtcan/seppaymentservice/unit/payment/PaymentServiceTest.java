@@ -222,6 +222,42 @@ public class PaymentServiceTest {
         verify(paymentRepository, times(1)).findById(id);
     }
 
+    @Test
+    public void testGetPaymentsByUserId() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+        int amount = 10;
+        BigDecimal price = BigDecimal.valueOf(100);
+
+        Payment payment = Payment.builder()
+                .id(id)
+                .userId(userId)
+                .productId(productId)
+                .amount(amount)
+                .price(price)
+                .build();
+
+        List<Payment> paymentList = List.of(payment);
+
+        // When
+        when(paymentRepository.findByUserId(userId)).thenReturn(Flux.fromIterable(paymentList));
+
+        // Then
+        StepVerifier.create(paymentService.getByUserId(userId))
+                .assertNext(savedPayment -> {
+                    Assertions.assertEquals(id, savedPayment.getId());
+                    Assertions.assertEquals(userId, savedPayment.getUserId());
+                    Assertions.assertEquals(productId, savedPayment.getProductId());
+                    Assertions.assertEquals(amount, savedPayment.getAmount());
+                    Assertions.assertEquals(price, savedPayment.getPrice());
+                })
+                .verifyComplete();
+
+        // Verify
+        verify(paymentRepository, times(1)).findByUserId(userId);
+    }
 
     @Test
     public void testGetPaymentByIdNotFound() {
