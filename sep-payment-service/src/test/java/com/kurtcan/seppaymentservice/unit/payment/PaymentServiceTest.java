@@ -1,9 +1,11 @@
 package com.kurtcan.seppaymentservice.unit.payment;
 
 import com.kurtcan.seppaymentservice.payment.*;
+import com.kurtcan.seppaymentservice.payment.event.PaymentCreated;
 import com.kurtcan.seppaymentservice.payment.request.PaymentCreate;
 import com.kurtcan.seppaymentservice.product.Product;
 import com.kurtcan.seppaymentservice.product.ProductRepository;
+import com.kurtcan.seppaymentservice.shared.event.DataEvent;
 import com.kurtcan.seppaymentservice.shared.mapper.ModelMapperConfig;
 import com.kurtcan.seppaymentservice.shared.event.JsonEventPublisher;
 import com.kurtcan.seppaymentservice.shared.event.SimpleEvent;
@@ -76,11 +78,16 @@ public class PaymentServiceTest {
                 .amount(amount)
                 .build();
 
+        PaymentCreated paymentCreated = PaymentCreated.builder()
+                .userId(userId)
+                .productId(productId)
+                .build();
+
         // When
         when(productRepository.findById(productId)).thenReturn(Mono.just(product));
         when(productRepository.save(any(Product.class))).thenReturn(Mono.just(product));
         when(paymentRepository.save(any(Payment.class))).thenReturn(Mono.just(payment));
-        when(eventPublisher.publishAsync(PaymentEventTopic.CREATED, SimpleEvent.fromEntity(payment))).thenReturn(Mono.empty());
+        when(eventPublisher.publishAsync(PaymentEventTopic.CREATED, DataEvent.fromEntity(payment, paymentCreated))).thenReturn(Mono.empty());
 
         // Then
         StepVerifier.create(paymentService.createPayment(paymentCreate))
@@ -97,7 +104,7 @@ public class PaymentServiceTest {
         verify(productRepository, times(1)).findById(productId);
         verify(productRepository, times(1)).save(any(Product.class));
         verify(productRepository, times(1)).save(productCaptor.capture());
-        verify(eventPublisher, times(1)).publishAsync(PaymentEventTopic.CREATED, SimpleEvent.fromEntity(payment));
+        verify(eventPublisher, times(1)).publishAsync(PaymentEventTopic.CREATED, DataEvent.fromEntity(payment, paymentCreated));
         Assertions.assertEquals(stockAmount - amount, productCaptor.getValue().getStockAmount());
     }
 
