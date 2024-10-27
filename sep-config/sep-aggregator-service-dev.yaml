@@ -1,0 +1,17 @@
+spring:
+  graphql.graphiql.enabled: true
+
+hazelcast:
+  enabled: true
+  cache:
+    cache-ttl-seconds: 3600
+    backup-count: 1
+    max-size: 1000
+
+kafka:
+  consumer:
+    group-id: sep-aggregator-group
+
+jwt:
+  client-id: sep-aggregator-service
+  client-secret: "{cipher}<KEYCLOAK-CLIENT-SECRET>"
