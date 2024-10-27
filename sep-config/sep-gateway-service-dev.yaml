@@ -1,12 +1,14 @@
 spring:
   cloud:
     gateway:
-      routes:
+     routes:
+        # Discovery Service routes
         - id: discovery-service
           uri: lb://sep-discovery-service
           predicates:
             - Path=/eureka-dashboard/**, /eureka/**
 
+        # Product Service routes
         - id: product-service
           uri: lb://sep-product-service
           predicates:
@@ -17,6 +19,7 @@ spring:
                 regexp: /products(?<segment>.*)
                 replacement: $\{segment}
 
+        # Payment Service routes
         - id: payment-service
           uri: lb://sep-payment-service
           predicates:
@@ -26,7 +29,8 @@ spring:
               args:
                 regexp: /payments(?<segment>.*)
                 replacement: $\{segment}
-
+        
+        # Search Service routes
         - id: search-service
           uri: lb://sep-search-service
           predicates:
@@ -36,6 +40,23 @@ spring:
               args:
                 regexp: /search(?<segment>.*)
                 replacement: $\{segment}
+
+        # Aggregator Service routes
+        - id: aggregator-service
+          uri: lb://sep-aggregator-service
+          predicates:
+            - Path=/aggregator/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /aggregator(?<segment>.*)
+                replacement: $\{segment}
+
+        # GraphiQL ui for Aggregator Service
+        - id: aggregator-service-graphiql
+          uri: lb://sep-aggregator-service
+          predicates:
+            - Path=/graphiql/**, /graphiql/**
 
 springdoc:
   swagger-ui:
