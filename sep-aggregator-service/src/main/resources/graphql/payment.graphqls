@@ -1,0 +1,10 @@
+type Payment implements BaseEntity {
+    id: ID
+    createdAt: String
+    updatedAt: String
+
+    userId: ID
+    productId: ID
+    amount: Int
+    price: Float
+}
