@@ -1,0 +1,15 @@
+interface BaseEntity {
+    id: ID
+    createdAt: String
+    updatedAt: String
+}
+
+interface Page {
+     number: Int
+     size: Int
+     totalElements: Int
+     totalPages: Int
+     isFirst: Boolean
+     isLast: Boolean
+     numberOfElements: Int
+}

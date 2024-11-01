@@ -1,3 +1,10 @@
 type Query {
+    products(
+        search: String = "",
+        page: Int = 0,
+        size: Int = 10,
+        sort: String = "createdAt",
+        order: String = "asc"
+    ): ProductWithPaymentsPage
     payments: [Payment]
 }

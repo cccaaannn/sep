@@ -1,0 +1,23 @@
+type ProductWithPayments implements BaseEntity {
+    id: ID
+    createdAt: String
+    updatedAt: String
+
+    name: String
+    description: String
+    price: Float
+    stockAmount: Int
+
+    payments: [Payment]
+}
+
+type ProductWithPaymentsPage implements Page {
+    content: [ProductWithPayments]
+    number: Int
+    size: Int
+    totalElements: Int
+    totalPages: Int
+    isFirst: Boolean
+    isLast: Boolean
+    numberOfElements: Int
+}
