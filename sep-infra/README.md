@@ -57,7 +57,8 @@ docker compose -f docker-compose-keycloak.yaml up -d
     1. Create client: `sep-product-service`
     2. Create client: `sep-payment-service`
     3. Create client: `sep-search-service`
-    4. Go to `Client Scopes > roles > Mappers > create`
+    4. Create client: `sep-aggregator-service`
+    5. Go to `Client Scopes > roles > Mappers > create`
         - Name: "roles"
         - Mapper Type: "User Client Role"
         - Multivalued: True
@@ -87,5 +88,8 @@ docker compose -f ./sep-payment-service/docker-compose.yaml up -d --remove-orpha
 ```
 ```shell
 docker compose -f ./sep-search-service/docker-compose.yaml up -d --remove-orphans
+```
+```shell
+docker compose -f ./sep-aggregator-service/docker-compose.yaml up -d --remove-orphans
 ```
 ---
