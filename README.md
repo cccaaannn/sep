@@ -66,22 +66,23 @@
     1. MySql
     2. Flyway migrations
 4. Specification pattern
-5. Spring cache
+5. Virtual threads
+6. Spring cache
 	1. Redis
     2. In memory cache as fallback
-6. Event sourcing
+7. Event sourcing
 	1. Kafka
     2. Retry and dlt topics
-7. Circuit breaker pattern
+8. Circuit breaker pattern
     1. Resilience4j
-8. Structured logging
+9. Structured logging
     1. Logback
 	2. Elk stack
-9. Authentication
+10. Authentication
     1. Keycloak
-10. Helpers
+11. Helpers
     1. Feign client
-11. Tests
+12. Tests
     1. Unit tests
         1. Without starting spring container
     2. Integration tests
